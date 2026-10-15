@@ -1,0 +1,19 @@
+{
+  "name": "coffee-blockchain",
+  "version": "1.0.0",
+  "description": "A proof-of-work blockchain backend for tracing Fair Trade coffee batches.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4"
+  }
+}
