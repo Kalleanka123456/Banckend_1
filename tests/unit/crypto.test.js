@@ -1,3 +1,4 @@
+const { createHash } = require('node:crypto');
 const { calculateHash } = require('../../src/blockchain/crypto');
 
 const block = {
@@ -18,6 +19,21 @@ const block = {
 describe('calculateHash', () => {
   it('returns a 64-character hexadecimal SHA-256 hash', () => {
     expect(calculateHash(block)).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it('matches the SHA-256 hash of the canonical block serialization', () => {
+    const serializedBlock = JSON.stringify({
+      index: block.index,
+      timestamp: block.timestamp,
+      transactions: block.transactions,
+      previousHash: block.previousHash,
+      nonce: block.nonce
+    });
+    const expectedHash = createHash('sha256')
+      .update(serializedBlock)
+      .digest('hex');
+
+    expect(calculateHash(block)).toBe(expectedHash);
   });
 
   it('returns the same hash for the same block content', () => {
@@ -46,5 +62,21 @@ describe('calculateHash', () => {
     };
 
     expect(calculateHash(reorderedBlock)).toBe(calculateHash(block));
+  });
+
+  it('uses consistent serialization for transaction property order', () => {
+    const reorderedTransactionBlock = {
+      ...block,
+      transactions: [
+        {
+          weightKg: 250,
+          batchId: 'FT-2026-001',
+          recipient: 'Roastery B',
+          sender: 'Farm A'
+        }
+      ]
+    };
+
+    expect(calculateHash(reorderedTransactionBlock)).toBe(calculateHash(block));
   });
 });
