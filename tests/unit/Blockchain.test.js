@@ -73,6 +73,27 @@ describe('Blockchain', () => {
     expect(blockchain.isChainValid()).toBe(false);
   });
 
+  it('reports malformed block structure as an invalid chain', () => {
+    const blockchain = new Blockchain();
+    blockchain.chain[0].transactions = null;
+
+    expect(() => blockchain.isChainValid()).not.toThrow();
+    expect(blockchain.isChainValid()).toBe(false);
+  });
+
+  it('reports a replaced block without a verifier as an invalid chain', () => {
+    const blockchain = new Blockchain();
+    blockchain.addTransaction(validTransaction);
+    blockchain.minePendingTransactions();
+    blockchain.chain[1] = {
+      index: 1,
+      previousHash: blockchain.chain[0].hash
+    };
+
+    expect(() => blockchain.isChainValid()).not.toThrow();
+    expect(blockchain.isChainValid()).toBe(false);
+  });
+
   it('rejects mining when the pending queue is empty', () => {
     const blockchain = new Blockchain();
 
