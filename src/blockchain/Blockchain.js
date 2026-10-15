@@ -79,11 +79,12 @@ class Blockchain {
 
     const genesisBlock = this.chain[0];
     if (
-      !genesisBlock ||
+      !(genesisBlock instanceof Block) ||
       genesisBlock.index !== 0 ||
       genesisBlock.previousHash !== '0' ||
+      !Array.isArray(genesisBlock.transactions) ||
       genesisBlock.transactions.length !== 0 ||
-      !genesisBlock.hasValidHash(this.difficulty)
+      !Block.prototype.hasValidHash.call(genesisBlock, this.difficulty)
     ) {
       return false;
     }
@@ -93,10 +94,10 @@ class Blockchain {
       const previousBlock = this.chain[index - 1];
 
       if (
-        !currentBlock ||
+        !(currentBlock instanceof Block) ||
         currentBlock.index !== index ||
         currentBlock.previousHash !== previousBlock.hash ||
-        !currentBlock.hasValidHash(this.difficulty)
+        !Block.prototype.hasValidHash.call(currentBlock, this.difficulty)
       ) {
         return false;
       }
