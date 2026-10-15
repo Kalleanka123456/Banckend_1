@@ -31,6 +31,30 @@ class Block {
       return false;
     }
 
+    if (
+      !Number.isInteger(this.index) ||
+      this.index < 0 ||
+      typeof this.timestamp !== 'number' ||
+      !Number.isFinite(this.timestamp) ||
+      !Array.isArray(this.transactions) ||
+      !this.transactions.every(
+        (transaction) =>
+          transaction !== null &&
+          typeof transaction === 'object' &&
+          typeof transaction.sender === 'string' &&
+          typeof transaction.recipient === 'string' &&
+          typeof transaction.batchId === 'string' &&
+          typeof transaction.weightKg === 'number' &&
+          Number.isFinite(transaction.weightKg) &&
+          transaction.weightKg > 0
+      ) ||
+      typeof this.previousHash !== 'string' ||
+      !Number.isInteger(this.nonce) ||
+      this.nonce < 0
+    ) {
+      return false;
+    }
+
     return (
       this.hash === calculateHash(this) &&
       this.hash.startsWith('0'.repeat(difficulty))
